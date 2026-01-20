@@ -1,66 +1,89 @@
 import SwiftUI
 
-
-struct TechItem: Identifiable {
-    let id = UUID()
-    let name: String
-    let icon: String
-    var isLearned: Bool
-}
-
 struct ContentView: View {
+  
     
-   
-    @State private var technologies = [
-        TechItem(name: "Swift Language", icon: "swift", isLearned: true),
-        TechItem(name: "SwiftUI", icon: "paintbrush.fill", isLearned: true),
-        TechItem(name: "Networking (API)", icon: "globe", isLearned: false),
-        TechItem(name: "CoreData / SwiftData", icon: "externaldrive.fill", isLearned: false),
-        TechItem(name: "Архитектура (MVVM)", icon: "building.columns.fill", isLearned: false)
-    ]
-    
-    var body: some View {
-       
-        NavigationStack {
-            
-           
-            List($technologies) { $tech in
-                
-               
-                HStack {
-                    Image(systemName: tech.icon)
-                        .foregroundColor(.blue)
-                        .font(.title2)
-                        .frame(width: 30)
-                    
-                    Text(tech.name)
-                        .font(.headline)
-                    
-                    Spacer()
-                    
-                    OnTapButton(isChecked: $tech.isLearned)
-                }
-                .padding(.vertical, 5)
-            }
-            .navigationTitle("Мой Roadmap")
-        }
-    }
-}
+    @State private var name: String = ""
+    @State private var codingLevel: Int = 1
+    @State private var isReadyForWork: Bool = false
 
-struct OnTapButton: View {
-    @Binding var isChecked: Bool
     
     var body: some View {
-        Button(action: {
-            withAnimation {
-                isChecked.toggle()
+        
+    ZStack {
+           
+            Color(UIColor.systemGroupedBackground)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack(spacing: 20) {
+                
+    VStack(spacing: 10) {
+            Image(systemName: isReadyForWork ? "briefcase.fill" : "studentdesk")
+                    .font(.system(size: 60))
+                    .foregroundColor(isReadyForWork ? .green : .orange)
+                    .padding()
+                    
+            Text(name.isEmpty ? "Твое Имя" : name)
+                        .font(.title)
+                        .bold()
+                    
+            Text("Уровень Swift: \(codingLevel)")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.white)
+                .cornerRadius(20)
+                .shadow(radius: 5)
+                .padding(.horizontal)
+                
+                VStack(spacing: 20) {
+                    
+                    
+            TextField("Введите имя", text: $name)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                    
+            HStack {
+                        Text("Скилл:")
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            if codingLevel > 0 { codingLevel -= 1 }
+                        }) {
+                            Image(systemName: "minus.square.fill")
+                                .font(.largeTitle)
+                                .foregroundColor(.red)
+                        }
+                        
+                        Button(action: {
+                            codingLevel += 1
+                        }) {
+                            Image(systemName: "plus.square.fill")
+                                .font(.largeTitle)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    Toggle(isOn: $isReadyForWork) {
+                        Text("Готов к работе?")
+                            .bold()
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                }
+                
+                Spacer()
             }
-        }) {
-            Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(isChecked ? .green : .gray)
-                .font(.title)
+            .padding(.top, 50)
         }
-        .buttonStyle(PlainButtonStyle()) 
     }
 }
 
